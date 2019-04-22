@@ -1,0 +1,62 @@
+/*
+输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。
+如果是则输出Yes,否则输出No。假设输入的数组的任意两个数字都互不相同。
+*/
+/*
+解析一：
+后序遍历的顺序为左右根，因此序列的最后一个节点为根节点。而根据二叉树的
+性质，这里应该是排序二叉树，左侧节点的key值<根节点的key值<右侧节点的key值
+每次均以序列最后一个元素开始向前寻找比该元素小的值，视为左侧节点序列，之后
+的值视为右侧节点序列。并判断左侧序列值是否都小于等于根节点值，右侧节点值是
+否都大于等于根节点值。判断完后根节点前移，继续判断，直至序列元素个数为1.
+例：5,7,6,9,11,10,8
+round1: 5,7,6,  8,  9,11,10 
+round2: 5,7,6,9,    10,11
+round...
+*/
+class Solution {
+    bool judge(vector<int> v,int n)
+    {
+        if(n<=1)
+            return true;//递归退出条件
+        int i=n-2;//这里n为元素个数，所以从倒数第二个n-2开始判断。
+        for(i;i>=1;i--)
+            if(v[i]<=v[n-1])
+                break;//以序列最后一个元素分割出左右节点序列
+        for(int j=0;j<i;j++)
+            if(v[j]>v[n-1])
+                return false;//判断左节点序列是否都小于等于根节点
+        for(int j=i+1;j<n;j++)
+            if(v[j]<v[n-1])
+                return false;//判断右节点序列是否都大于等于根节点
+        return judge(v,n-1);//递归
+    }
+    public:
+    bool VerifySquenceOfBST(vector<int> sequence) {
+        if(sequence.empty())
+            return false;
+        return judge(sequence,sequence.size());
+    }
+};
+/*
+解析二：后序序列的最后一个元素X为根节点，
+根节点将序列分为左右两个子序列X1,X2;并且X1和X2都是后序序列
+因此循环分割，并判断左右两个子序列是否都满足后序序列。
+例：5,7,6,9,11,10,8
+round1: l: 5,7,6  r:9,11,10
+round...
+*/
+class Solution {
+    bool judge(vector<int>& a, int l, int r){
+        if(l >= r) return true;
+        int i = r;
+        while(i > l && a[i - 1] > a[r]) --i;
+        for(int j = i - 1; j >= l; --j) if(a[j] > a[r]) return false;
+        return judge(a, l, i - 1) && (judge(a, i, r - 1));
+    }
+public:
+    bool VerifySquenceOfBST(vector<int> a) {
+        if(!a.size()) return false;
+        return judge(a, 0, a.size() - 1);
+    }
+};
