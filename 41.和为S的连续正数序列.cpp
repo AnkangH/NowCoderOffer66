@@ -6,7 +6,7 @@ class Solution {
 public:
     vector<vector<int> > FindContinuousSequence(int sum) {
         vector<vector<int>> res;
-        for(int i=1;i<=sum;i++)
+        for(int i=1;i<=sum/2;i++)//连续和 所以最大的组合为sum/2开始，如100时，若50+51不满足 则其后的均不满足。
             dfs(res,{},sum,i);//从i开始dfs连续数字
         return res;
     }
