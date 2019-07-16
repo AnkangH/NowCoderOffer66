@@ -10,6 +10,7 @@
 */
 
 
+//回溯法+提前退出
 #include<iostream>
 #include<vector>
 using namespace std;
@@ -46,4 +47,34 @@ void dfs(vector<int>& temp,int target,int val)
     if(target-val>=3&&flag)//当前剩余值大于等于3
         dfs(temp,target-val,3);//再放置3
     temp.pop_back();//尾回溯 删除本轮添加的货物
+}
+
+
+//dp解法
+#include<iostream>
+#include<vector>
+#include<limits.h>// for INT_MAX
+using namespace std;
+int main()
+{
+    int target;
+    cin>>target;
+    vector<int> dp(target+1,INT_MAX);//dp[i] 装满体积为i的箱子所需最少货物数目
+    dp[3]=1;
+    dp[5]=1;
+    dp[7]=1;
+    dp[6]=2;//初始化
+    for(int i=8;i<=target;i++)//递推过程
+    {
+        int a=dp[i-3],b=dp[i-5],c=dp[i-7];//a b c分别代表i-3 i-5 i-7再装一个货物
+        if(a==INT_MAX&&b==INT_MAX&&c==INT_MAX)
+            dp[i]=INT_MAX;//表示i不能被被装满
+        else
+            dp[i]=min(min(a,b),c)+1;//最少的货物数目+1
+    }
+    if(dp[target]==INT_MAX)
+        cout<<"-1"<<endl;//不能被被装满
+    else
+        cout<<dp[target]<<endl;//输出最少货物数目
+    return 0;
 }
